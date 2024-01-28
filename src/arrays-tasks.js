@@ -38,7 +38,10 @@ function getIntervalArray(start, end) {
  *    sumArrays([-1, 0, 1], [1, 2, 3, 4]) => [0, 2, 4, 4]
  */
 function sumArrays(arr1, arr2) {
-  return Array.from({ length: arr1.length }, (_, i) => arr1[i] + arr2[i]);
+  return Array.from(
+    { length: Math.max(arr1.length, arr2.length) },
+    (_, i) => (arr1[i] || 0) + (arr2[i] || 0)
+  );
 }
 
 /**
@@ -75,13 +78,8 @@ function findElement(arr, value) {
  *    findAllOccurrences([ true, 0, 1, 'true' ], true) => 1
  */
 function findAllOccurrences(arr, item) {
-  let num = 0;
-  arr.forEach((element) => {
-    if (element === item) {
-      num += 1;
-    }
-  });
-  return num;
+  const num = arr.filter((element) => element === item);
+  return num.length;
 }
 
 /**
@@ -132,12 +130,16 @@ function getStringsLength(arr) {
  *   getAverage([ 2, 3, 3 ])  => 2,67
  */
 function getAverage(arr) {
-  const ins = 0;
+  const initialValue = 0;
   const sum = arr.reduce(
     (accumulator, currentValue) => accumulator + currentValue,
-    ins
+    initialValue
   );
-  return sum / arr.length;
+  const average =
+    (sum / arr.length) % 1 !== 0
+      ? (sum / arr.length).toFixed(2)
+      : sum / arr.length;
+  return average;
 }
 
 /**
@@ -299,7 +301,7 @@ function createNDimensionalArray(n, size) {
  *    flattenArray([1, 2, 3, 4]) => [1, 2, 3, 4]
  */
 function flattenArray(nestedArray) {
-  return nestedArray.flat();
+  return nestedArray.flat(Infinity);
 }
 
 /**
@@ -427,10 +429,8 @@ function getFalsyValuesCount(arr) {
  *                              [0,0,0,0,1]]
  */
 function getIdentityMatrix(n) {
-  const s = Array.from(
-    { length: n },
-    (_, x) =>
-      (x = Array.from({ length: n }, (_, y) => (x === y) ? (y = 1) : (y = 0)))
+  const s = Array.from({ length: n }, (_, x) =>
+    Array.from({ length: n }, (ad, y) => (x === y ? 1 : 0))
   );
   return s;
 }
@@ -448,7 +448,7 @@ function getIdentityMatrix(n) {
  */
 function getIndicesOfOddNumbers(numbers) {
   const s = numbers.map((element) =>
-    element % 2 !== 0 ? (element = numbers.indexOf(element)) : (element = '')
+    element % 2 !== 0 ? numbers.indexOf(element) : ''
   );
   return s.filter((e) => e !== '');
 }
@@ -482,7 +482,8 @@ function getHexRGBValues(arr) {
  *   getMaxItems([ 10, 10, 10, 10 ], 3) => [ 10, 10, 10 ]
  */
 function getMaxItems(arr, n) {
-  return arr.slice(Math.max(arr.length - n, 0));
+  const k = arr.sort((a, b) => a - b);
+  return k.slice(Math.max(arr.length - n, 0)).reverse();
 }
 
 /**
@@ -532,7 +533,7 @@ function findLongestIncreasingSubsequence(/* nums */) {
  */
 function propagateItemsByPositionIndex(arr) {
   return arr.flatMap((element) =>
-    Array.from({ length: arr.indexOf(element) + 1 }, (_, e) => (e = element))
+    Array.from({ length: arr.indexOf(element) + 1 }, () => element)
   );
 }
 
